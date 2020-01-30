@@ -1,0 +1,68 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:lorem_cutesum/lorem_cutesum.dart';
+import 'package:flash/flash.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(primaryColor: Colors.red, accentColor: Colors.red),
+      title: "Seks",
+      home: MyCustomForm(),
+    );
+  }
+}
+
+class MyCustomForm extends StatefulWidget {
+  @override
+  _MyCustomFormState createState() => _MyCustomFormState();
+}
+
+class _MyCustomFormState extends State<MyCustomForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Retrieve Text Input'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => NetworkGiffyDialog(
+              image: Image.network(
+                "https://raw.githubusercontent.com/Shashank02051997/FancyGifDialog-Android/master/GIF's/gif14.gif",
+                fit: BoxFit.cover,
+              ),
+              title: Text(
+                'Giffy',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+              ),
+              description: Text(
+                '${Cutesum.loremCutesum(words: 20)}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              entryAnimation: EntryAnimation.BOTTOM_RIGHT,
+              buttonCancelColor: Colors.red,
+              buttonOkColor: Colors.green,
+              buttonRadius: 40,
+              onOkButtonPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
