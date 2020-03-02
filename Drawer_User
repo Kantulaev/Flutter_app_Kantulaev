@@ -1,0 +1,106 @@
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'package:random_color/random_color.dart';
+import 'package:flutter/material.dart';
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
+import 'package:mock_data/mock_data.dart';
+import 'package:http/http.dart' as http;
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.red,
+      ),
+      home: MyApp1(),
+    );
+  }
+}
+
+class MyApp1 extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyApp1State();
+}
+
+class _MyApp1State extends State<MyApp1> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Seks'),
+      ),
+      body: Center(
+          child: Text(
+        'Main 1',
+        style: TextStyle(fontSize: 90),
+      )),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              otherAccountsPictures: <Widget>[
+                CircleAvatar(
+                  child: Text('B'),
+                ),
+                CircleAvatar(
+                  child: Text('C'),
+                )
+              ],
+              currentAccountPicture: CircleAvatar(
+                child: Text(
+                  'A',
+                  style: TextStyle(fontSize: 40),
+                ),
+                backgroundColor: Colors.blue,
+              ),
+              accountEmail: Text('Kantulaev@mail.ru'),
+              accountName: Text('Kantulaev'),
+            ),
+            ListTile(
+              subtitle: Text('Subtitle'),
+              leading: Icon(Icons.airplanemode_active),
+              trailing: Icon(Icons.print),
+              title: Text('Item 1'),
+              onTap: () {
+                Navigator.push(context, _NewPage(1));
+              },
+            ),
+            ListTile(
+              enabled: true,
+              subtitle: Text('Subtitle2'),
+              leading: Icon(Icons.airplanemode_active),
+              trailing: Icon(Icons.print),
+              title: Text('Item 1'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewPage extends MaterialPageRoute<Null> {
+  _NewPage(int id)
+      : super(
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Page $id'),
+                elevation: 1,
+              ),
+              body: Center(
+                child: Text('Page $id'),
+              ),
+            );
+          },
+        );
+}
