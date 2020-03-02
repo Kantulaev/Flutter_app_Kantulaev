@@ -1,2 +1,2 @@
 # Flutter_app_Kantulaev
-This is project with custom snackbar in FLutter
+This is project smth in FLutter
