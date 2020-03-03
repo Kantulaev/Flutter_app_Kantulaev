@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+
+main() => runApp(MyNewApp());
+
+class MyNewApp extends StatefulWidget {
+  @override
+  _MyNewAppState createState() => _MyNewAppState();
+}
+
+class _MyNewAppState extends State<MyNewApp> {
+  final items = List.generate(100, (i) => 'Item $i');
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Seks'),
+        ),
+        body: Center(
+          child: ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) {
+              final item = items[index];
+              return Dismissible(
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.endToStart) {
+                    final bool res = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text(
+                                "Are you sure you want to delete ${items[index]}?"),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () {
+                                  // TODO: Delete the item from DB etc..
+                                  setState(() {
+                                    items.removeAt(index);
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                    return res;
+                  } else {
+                    return true;
+                  }
+                },
+                secondaryBackground: slideLeftBackground(),
+                background: slideRightBackground(),
+                onDismissed: (direction) {
+                  setState(() {
+                    items.removeAt(index);
+                  });
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$item delete'),
+                    ),
+                  );
+                },
+                child: InkWell(
+                  onTap: () {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('${items[index]}'),
+                    ));
+                  },
+                  child: ListTile(
+                    title: Text('${items[index]}'),
+                  ),
+                ),
+                key: Key(item),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Widget slideLeftBackground() {
+  return Container(
+    color: Colors.green,
+    child: Align(
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Icon(Icons.assignment_turned_in, color: Colors.white),
+          SizedBox(width: 10),
+          Text('Complete', style: TextStyle(color: Colors.white)),
+          SizedBox(width: 20)
+        ],
+      ),
+    ),
+  );
+}
+
+Widget slideRightBackground() {
+  return Container(
+    color: Colors.yellow[800],
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(width: 20),
+          Icon(Icons.edit, color: Colors.black),
+          SizedBox(width: 10),
+          Text('Edit', style: TextStyle(color: Colors.black)),
+        ],
+      ),
+    ),
+  );
+}
