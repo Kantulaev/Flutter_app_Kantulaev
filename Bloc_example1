@@ -1,96 +1,112 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 
-@immutable
-abstract class DataEvent {}
+enum MyEvent { eventA, eventB, eventC }
 
-class FetchData extends DataEvent {}
+abstract class MyState {}
 
-@immutable
-abstract class DataState {}
+class StateA extends MyState {}
 
-class Initial extends DataState {}
+class StateB extends MyState {}
 
-class Loading extends DataState {}
+class StateC extends MyState {}
 
-class Success extends DataState {}
-
-class DataBloc extends Bloc<DataEvent, DataState> {
+class MyBloc extends Bloc<MyEvent, MyState> {
   @override
-  DataState get initialState => Initial();
+  MyState get initialState => StateA();
 
   @override
-  Stream<DataState> mapEventToState(DataEvent event) async* {
-    if (event is FetchData) {
-      yield Loading();
-      await Future.delayed(Duration(seconds: 1));
-      yield Success();
+  Stream<MyState> mapEventToState(MyEvent event) async* {
+    switch (event) {
+      case MyEvent.eventA:
+        yield StateA();
+        break;
+      case MyEvent.eventB:
+        yield StateB();
+        break;
+      case MyEvent.eventC:
+        yield StateC();
+        break;
     }
   }
 }
 
-void main() => runApp(MyApp());
+void main() => runApp(
+      BlocProvider(
+        create: (context) => MyBloc(),
+        child: MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DataBloc(),
-      child: MaterialApp(
-        home: Home(),
+    return MaterialApp(
+      home: BlocBuilder<MyBloc, MyState>(
+        builder: (BuildContext _, state) {
+          if (state is StateA) {
+            return PageA();
+          }
+          return state is StateB ? PageB() : PageC();
+        },
       ),
     );
   }
 }
 
-class Home extends StatelessWidget {
+class PageA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final dataBloc = BlocProvider.of<DataBloc>(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: BlocListener<DataBloc, DataState>(
-        listener: (context, state) {
-          if (state is Success) {
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.green,
-                content: Text('Success 1'),
-              ),
-            );
-          }
-        },
-        child: BlocBuilder<DataBloc, DataState>(
-          builder: (context, state) {
-            if (state is Initial) {
-              return Center(child: Text('Press the Button'));
-            }
-            if (state is Loading) {
-              return Center(
-                  child: CircularProgressIndicator(
-                strokeWidth: 10,
-                backgroundColor: Colors.orange,
-              ));
-            }
-            if (state is Success) {
-              return Center(child: Text('Success 1'));
-            }
+      appBar: AppBar(
+        title: Text('Page A'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Go to PageB'),
+          onPressed: () {
+            BlocProvider.of<MyBloc>(context).add(MyEvent.eventB);
           },
         ),
       ),
-      floatingActionButton: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-            child: Icon(Icons.play_arrow),
-            onPressed: () {
-              dataBloc.add(FetchData());
-            },
-          ),
-        ],
+    );
+  }
+}
+
+class PageB extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Page B'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Go to PageC'),
+          onPressed: () {
+            BlocProvider.of<MyBloc>(context).add(MyEvent.eventC);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class PageC extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Page C'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('Go to A'),
+          onPressed: () {
+            BlocProvider.of<MyBloc>(context).add(MyEvent.eventA);
+          },
+        ),
       ),
     );
   }
