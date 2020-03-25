@@ -1,0 +1,59 @@
+import 'package:flame/game.dart';
+import 'package:flame/util.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  var game = BoxGame();
+  var tapper = TapGestureRecognizer();
+  tapper.onTapDown = game.onTapDown;
+
+  var flameUtil = Util();
+  flameUtil.setOrientation(DeviceOrientation.portraitUp);
+  flameUtil.fullScreen();
+  runApp(game.widget);
+  flameUtil.addGestureRecognizer(tapper);
+}
+
+class BoxGame extends Game {
+  Size screenSize;
+  var hasWon = false;
+
+  void render(Canvas canvas) {
+    var bgRect = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
+    var bgPaint = Paint();
+    bgPaint.color = Color(0xff123147);
+    canvas.drawRect(bgRect, bgPaint);
+
+    var screenCenterX = screenSize.width / 2;
+    var screenCenterY = screenSize.height / 2;
+    var boxRect =
+        Rect.fromLTWH(screenCenterX - 75, screenCenterY - 75, 150, 150);
+    var boxPaint = Paint();
+    boxPaint.color = hasWon ? Color(0xff00ff00) : Color(0xffffffff);
+    canvas.drawRect(boxRect, boxPaint);
+  }
+
+  void onTapDown(TapDownDetails d) {
+    var screenCenterX = screenSize.width / 2;
+    var screenCenterY = screenSize.height / 2;
+    if (d.globalPosition.dx >= screenCenterX - 75 &&
+        d.globalPosition.dx <= screenCenterX + 75 &&
+        d.globalPosition.dy >= screenCenterY - 75 &&
+        d.globalPosition.dy <= screenCenterY + 75) {
+      hasWon = true;
+    }
+  }
+
+  @override
+  void resize(Size size) {
+    screenSize = size;
+    super.resize(size);
+  }
+
+  @override
+  void update(double t) {
+    // TODO: implement update
+  }
+}
